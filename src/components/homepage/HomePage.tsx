@@ -21,11 +21,11 @@ const HomePage = () => {
 
     // Live Hero Typing
     const phrases = [
-        'Learn Dropshipping \nand kickstart your online empire...',
-        'Master E-Commerce \nand turn ideas into revenue...',
-        'Scale Profits faster \nwith smart strategies...',
-        'Invest Smartly \nand watch your money grow...',
-        'Build Wealth \nby creating multiple income streams...',
+        'Learn Dropshipping\nand kickstart your online empire...',
+        'Master E-Commerce\nand turn ideas into revenue...',
+        'Scale Profits faster\nwith smart strategies...',
+        'Invest Smartly\nand watch your money grow...',
+        'Build Wealth\nby creating multiple income streams...',
     ]
 
     // const phrases = [
@@ -43,6 +43,13 @@ const HomePage = () => {
         { user: 'Emma R.', amount: '$15,680', platform: 'Investment', date: '6 hours ago' },
         { user: 'David K.', amount: '$9,340', platform: 'Crypto', date: '8 hours ago' },
         { user: 'James W.', amount: '$22,150', platform: 'E-commerce', date: '12 hours ago' },
+        { user: 'Adam L.', amount: '$72,050', platform: 'Investment', date: '1 hours ago' },
+        { user: 'Ritesh K.', amount: '$9,700', platform: 'E-commerce', date: '12 hours ago' },
+        { user: 'Olivia P.', amount: '$66,320', platform: 'Crypto', date: '11 hours ago' },
+        { user: 'Annalisa L.', amount: '$32,900', platform: 'Crypto', date: '8 hours ago' },
+        { user: 'Wilson Z.', amount: '$30,000', platform: 'E-commerce', date: '19 hours ago' },
+        { user: 'Lucas L.', amount: '$52,400', platform: 'Investment', date: '3 hours ago' },
+        { user: 'Boss B.', amount: '$11,000', platform: 'E-commerce', date: '9 hours ago' },
     ];
 
     // Mock testimonials
@@ -77,35 +84,32 @@ const HomePage = () => {
     useEffect(() => {
         let timeout: string | number | NodeJS.Timeout | undefined;
 
-        const type = () => {
-            const currentPhrase = phrases[currentIndex];
+        const currentPhrase = phrases[currentIndex];
+        // const isDoneTyping = typewriterText === currentPhrase;
+        // const isEmpty = typewriterText === "";
 
-            if (!isDeleting) {
-                // Typing
+        if (!isDeleting && typewriterText.length < currentPhrase.length) {
+            // Typing forward
+            timeout = setTimeout(() => {
                 setTypewriterText(currentPhrase.substring(0, typewriterText.length + 1));
+            }, 120);
 
-                if (typewriterText.length === currentPhrase.length) {
-                    // pause before deleting
-                    timeout = setTimeout(() => setIsDeleting(true), 2500);
-                } else {
-                    timeout = setTimeout(type, 1000);
-                }
-            } else {
-                // Deleting
+        } else if (!isDeleting && typewriterText.length === currentPhrase.length) {
+            // pause before deleting
+            timeout = setTimeout(() => setIsDeleting(true), 1500);
+
+        } else if (isDeleting && typewriterText.length > 0) {
+            // Deleting
+            timeout = setTimeout(() => {
                 setTypewriterText(currentPhrase.substring(0, typewriterText.length - 1));
-
-                if (typewriterText.length === 0) {
-                    // Move to next phrase
-                    setIsDeleting(false);
-                    setCurrentIndex((prev) => (prev + 1) % phrases.length);
-                    timeout = setTimeout(type, 1500);
-                } else {
-                    timeout = setTimeout(type, 105)
-                }
-            }
-        };
-
-        type();
+            }, 60);
+        } else if (isDeleting && typewriterText.length === 0) {
+            // move to next phrase
+            timeout = setTimeout(() => {
+                setIsDeleting(false);
+                setCurrentIndex((prev) => (prev + 1) % phrases.length);
+            }, 300);
+        }
 
         return () => clearTimeout(timeout);
     }, [typewriterText, isDeleting, currentIndex]);
