@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface OnboardingState {
+    [x: string]: unknown;
     step: number;
     email: string;
     verified: boolean;

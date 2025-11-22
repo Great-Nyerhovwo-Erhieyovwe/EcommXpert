@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { auditSupabase, getAllAuditUsers } from '../../lib/auditBackend';
+import { getAllAuditUsers } from '../../lib/auditBackend';
 // import './AuditDashboard.css';
 
 const AuditDashboard: React.FC = () => {

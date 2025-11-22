@@ -1,9 +1,13 @@
 import React from 'react';
 import { useEmail } from '../../hooks/useEmail';
+import type { EmailPreference } from '../../types/emails';
+
 
 const PreferenceCenter: React.FC = () => {
     const { state, updatePreference } = useEmail();
     const [activeCategory, setActiveCategory] = React.useState('all');
+
+    type PreferenceCategory = EmailPreference['category'];
 
     const categories = ['all', 'welcome', 'course', 'investment', 'security', 'marketing'];
     const categoryLabels: Record<string, string> = {
@@ -19,8 +23,8 @@ const PreferenceCenter: React.FC = () => {
         ? state.preferences
         : state.preferences.filter(p => p.category === activeCategory);
 
-    const handlePreferenceChange = (categoryId: string, enabled: boolean) => {
-        updatePreference('usr_001', categoryId, enabled);
+    const handlePreferenceChange = (categoryId: PreferenceCategory, enabled: boolean) => {
+        updatePreference('usr_001', categoryId as EmailPreference ['category'], enabled); // errors here
     };
 
     return (

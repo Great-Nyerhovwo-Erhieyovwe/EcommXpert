@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import './HomePage.css';
 import { User } from '@supabase/supabase-js';
+import GLOBE from 'vanta/dist/vanta.globe.min';
+import * as THREE from 'three';
+
 
 const HomePage = () => {
     const [email, setEmail] = useState('');
@@ -11,6 +14,11 @@ const HomePage = () => {
     const [showSupportChat, setShowSupportChat] = useState(false);
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
     const [_currentUser, setCurrentUser] = useState<User | null>(null);
+
+    // NEW: Ref for Vanta container
+    const vantaRef = useRef(null);
+    const vantaInstance = useRef(null);
+
 
     // NEW: Typewriter state
     const [typewriterText, setTypewriterText] = useState('');
@@ -114,6 +122,36 @@ const HomePage = () => {
         return () => clearTimeout(timeout);
     }, [typewriterText, isDeleting, currentIndex]);
 
+    
+    // NEW: Initialize Vanta Globe
+    useEffect(() => {
+        if (!vantaInstance.current && vantaRef.current) {
+            vantaInstance.current = GLOBE({
+                el: vantaRef.current,
+                THREE: THREE,
+                // Globe-specific options
+                color: 0x4a90e2,           // Main color
+                color2: 0x7b68ee,          // Secondary color
+                size: 1.5,                 // Size of the globe particles
+                backgroundColor: 0x0a0a0a, // Dark background
+                points: 15.0,              // Number of points
+                maxDistance: 20.0,         // Max distance for connections
+                spacing: 15.0,             // Spacing between points
+                // Performance options
+                scale: 1.0,
+                scaleMobile: 1.0,
+            });
+        }
+
+        return () => {
+            if (vantaInstance.current) {
+                // vantaInstance.current.destroy();
+                vantaInstance.current = null;
+            }
+        };
+    }, []);
+
+
     // Auto-rotate testimonials
     useEffect(() => {
         const interval = setInterval(() => {
@@ -192,6 +230,12 @@ const HomePage = () => {
 
             {/* Hero Section */}
             <section id="hero" className="hero">
+                {/* <div className="vanta-container">
+                    <img src="../../assets/images/Gemini_bg2.png" alt="" />
+                </div> */}
+                {/* Vanta Globe Background (full screen) */}
+                <div ref={vantaRef} className="vanta-container"></div>
+
                 <div className="hero-container">
                     <div className="hero-content">
                         <div className="hero-text">

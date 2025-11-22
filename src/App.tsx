@@ -16,6 +16,7 @@ import LoginPage from './components/auth/LoginPage.tsx';
 import SignupPage from './components/auth/SignupPage.tsx';
 // import { MobileProvider } from './hooks/useMobile.ts';
 import { DashboardProvider } from './hooks/useDashboard.ts';
+import OAuthCallback from './components/auth/OAuthCallback.tsx';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -96,6 +97,9 @@ function App() {
                               <Navigate to="/login" replace />
                           }
                         />
+
+                        {/* OAuth Callback */}
+                        <Route path="/oauth-callback" element={<OAuthCallback />} />
 
                         {/* Default route */}
                         <Route path="*" element={<HomePage />} />

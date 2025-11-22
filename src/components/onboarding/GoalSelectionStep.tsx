@@ -3,7 +3,7 @@ import useOnboarding from '../../hooks/useOnboarding';
 
 
 export interface GoalSelectionStepProps {
-    goal: 'learn' | 'invest' | 'both';
+    goal: 'learn' | 'invest' | 'both' | 'null';
     setGoal: (goal: 'learn' | 'invest' | 'both') => void;
     nextStep: () => void;
 }

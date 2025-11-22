@@ -2,8 +2,8 @@ import React from 'react';
 import useOnboarding from '../../hooks/useOnboarding';
 
 export interface FirstTaskStepProps {
-    goal?: 'learn' | 'invest' | 'both';
-    nextStep: () => void;
+    goal?: 'learn' | 'invest' | 'both' | 'null';
+    // nextStep: () => void;
     completeOnboarding: () => void;
 }
 

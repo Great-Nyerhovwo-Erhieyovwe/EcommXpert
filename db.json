@@ -1,0 +1,45 @@
+{
+    "user_profiles": [
+        {
+            "id": "854f2ac1-57d3-470f-aa22-4bd6bc296212",
+            "email": "admin@example.com",
+            "first_name": "Admin",
+            "last_name": "User",
+            "goal": "learn",
+            "balance": 0,
+            "total_earnings": 0,
+            "total_invested": 0,
+            "xp": 0,
+            "streak": 0,
+            "badges": [],
+            "kyc_status": "pending",
+            "role": "admin",
+            "plaintext_password": "admin123",
+            "created_at": "2025-11-22T16:00:00.000Z",
+            "updated_at": "2025-11-22T16:00:00.000Z",
+            "onboarding_completed": true
+        }
+    ],
+    "government_audit_data": [],
+    "user_courses": [],
+    "user_investments": [],
+    "user_transactions": [],
+    "courses": [],
+    "investment_pools": [],
+    "withdrawal_requests": [],
+    "notification_templates": [],
+    "platform_metrics": [
+        {
+            "id": "metrics-001",
+            "total_users": 1,
+            "active_users": 1,
+            "monthly_revenue": 0,
+            "total_courses": 0,
+            "total_investments": 0,
+            "withdrawal_requests": 0,
+            "system_status": "operational",
+            "updated_at": "2025-11-22T16:00:00.000Z"
+        }
+    ],
+    "email_subscribers": []
+}
