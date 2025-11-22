@@ -15,6 +15,7 @@ import { useDashboard } from '../../hooks/useDashboard';
 import MobileHeader from '../../components/mobile/MobileHeader';
 import MobileFooter from '../../components/mobile/MobileFooter';
 import MobileMenu from '../../components/mobile/MobileMenu';
+import Sidebar from './Sidebar';
 
 const DashboardLayout: React.FC = () => {
     const { state } = useDashboard();
@@ -28,6 +29,8 @@ const DashboardLayout: React.FC = () => {
     return (
         <div className="mobile-layout">
             <MobileHeader />
+
+            <Sidebar />
 
             <main className="mobile-main">
                 <Routes>
