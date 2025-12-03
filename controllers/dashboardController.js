@@ -1,4 +1,10 @@
 // Simulate DB access with your preferred DB (Postgres, Mongo, etc.)
+import User from '../models/User.js';
+import Course from '../models/Course.js';
+import InvestmentPool from '../models/InvestmentPool.js';
+import WithdrawalRequest from '../models/WithdrawalRequest.js';
+import NotificationTemplate from '../models/NotificationTemplate.js';
+import PlatformMetric from '../models/PlatformMetric.js';
 import db from '../db'; // Your DB client
 
 export const getDashboardData = async (req, res) => {
