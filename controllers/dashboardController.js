@@ -1,0 +1,29 @@
+// Simulate DB access with your preferred DB (Postgres, Mongo, etc.)
+import db from '../db'; // Your DB client
+
+export const getDashboardData = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Fetch user profile
+        const user = await db.users.findOne({ id: userId });
+
+        // Fetch courses, investments, transactions
+        const courses = await db.courses.find({ userId });
+        const investments = await db.investments.find({ userId });
+        const transactions = await db.transactions.find({ userId });
+
+        res.json({
+            user,
+            courses,
+            investments,
+            transactions,
+            balance: user.balance,
+            totalEarnings: user.totalEarnings,
+            totalInvested: user.totalInvested,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error fetching dashboard data' });
+    }
+};
