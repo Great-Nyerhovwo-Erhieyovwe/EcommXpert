@@ -79,3 +79,5 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         </DashboardContext.Provider>
     );
 };
+
+export default useDashboard;
