@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import cors from "cors";
 import dotenv from 'dotenv'
 import auth from './routes/auth.js';
+import dashboardRoutes from './routes/dashboard.js';
+import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
@@ -13,6 +15,13 @@ app.use(cors());
 
 // Routes
 app.use('/api/auth', auth);
+
+// Routes
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Health check
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 // Root test route
 app.get('/', (req, res) => {
