@@ -31,7 +31,7 @@ export interface OnboardingActions {
 export const useOnboarding = (): { state: OnboardingState; actions: OnboardingActions } => {
     const token = localStorage.getItem('token'); // JWT from login
     const axiosInstance = axios.create({
-        baseURL: 'https://your-backend.com/api',
+        baseURL: 'https://ecommxpertbackend.onrender.com/api',
         headers: { Authorization: `Bearer ${token}` },
     });
 
