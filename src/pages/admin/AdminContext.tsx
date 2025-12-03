@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { supabase } from '../../lib/supabase';
+import axios from 'axios';
 
 // Interfaces
 interface AdminUser {
@@ -114,13 +114,13 @@ const AdminContext = createContext<{
         loading: false,
         error: null,
     },
-    fetchAdminData: async () => { },
-    updateUser: async () => { },
-    deleteUser: async () => { },
-    updateCourse: async () => { },
-    createCourse: async () => { },
-    updateInvestmentPool: async () => { },
-    resolveWithdrawal: async () => { },
+    fetchAdminData: async () => {},
+    updateUser: async () => {},
+    deleteUser: async () => {},
+    updateCourse: async () => {},
+    createCourse: async () => {},
+    updateInvestmentPool: async () => {},
+    resolveWithdrawal: async () => {},
 });
 
 export const useAdmin = () => useContext(AdminContext);
@@ -145,23 +145,16 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         error: null,
     });
 
+    const token = localStorage.getItem('token'); // JWT from login
+    const axiosInstance = axios.create({
+        baseURL: 'https://ecommxpertbackend.onrender.com/api', // replace with your backend URL
+        headers: { Authorization: `Bearer ${token}` },
+    });
+
     const fetchAdminData = async () => {
         try {
             setState(prev => ({ ...prev, loading: true, error: null }));
 
-            // Check if user has admin role
-            const { data: { user }, error: authError } = await supabase.auth.getUser();
-            if (authError || !user) throw new Error('Not authenticated');
-
-            const { data: userProfile } = await supabase
-                .from('user_profiles')
-                .select('role')
-                .eq('id', user.id)
-                .single();
-
-            if (userProfile?.role !== 'admin') throw new Error('Not authorized');
-
-            // Fetch all admin data
             const [
                 usersResponse,
                 coursesResponse,
@@ -170,20 +163,13 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 notificationsResponse,
                 metricsResponse
             ] = await Promise.all([
-                supabase.from('user_profiles').select('*'),
-                supabase.from('courses').select('*'),
-                supabase.from('investment_pools').select('*'),
-                supabase.from('withdrawal_requests').select('*'),
-                supabase.from('notification_templates').select('*'),
-                supabase.from('platform_metrics').select('*').single(),
+                axiosInstance.get('/admin/users'),
+                axiosInstance.get('/admin/courses'),
+                axiosInstance.get('/admin/investment-pools'),
+                axiosInstance.get('/admin/withdrawals'),
+                axiosInstance.get('/admin/notifications'),
+                axiosInstance.get('/admin/metrics')
             ]);
-
-            if (usersResponse.error) throw usersResponse.error;
-            if (coursesResponse.error) throw coursesResponse.error;
-            if (poolsResponse.error) throw poolsResponse.error;
-            if (withdrawalsResponse.error) throw withdrawalsResponse.error;
-            if (notificationsResponse.error) throw notificationsResponse.error;
-            if (metricsResponse.error) throw metricsResponse.error;
 
             setState({
                 users: usersResponse.data,
@@ -199,27 +185,17 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             setState(prev => ({
                 ...prev,
                 loading: false,
-                error: (error as Error).message || 'Failed to load admin data'
+                error: (error as any).response?.data?.error || (error as Error).message || 'Failed to load admin data'
             }));
         }
     };
 
     const updateUser = async (userId: string, data: Partial<AdminUser>) => {
         try {
-            const { data: _updatedUser, error } = await supabase
-                .from('user_profiles')
-                .update(data)
-                .eq('id', userId)
-                .select()
-                .single();
-
-            if (error) throw error;
-
+            const { data: updatedUser } = await axiosInstance.put(`/admin/users/${userId}`, data);
             setState(prev => ({
                 ...prev,
-                users: prev.users.map(user =>
-                    user.id === userId ? { ...user, ...data } : user
-                ),
+                users: prev.users.map(user => user.id === userId ? { ...user, ...updatedUser } : user)
             }));
         } catch (error) {
             console.error('Update user error:', error);
@@ -228,16 +204,10 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const deleteUser = async (userId: string) => {
         try {
-            const { error } = await supabase
-                .from('user_profiles')
-                .delete()
-                .eq('id', userId);
-
-            if (error) throw error;
-
+            await axiosInstance.delete(`/admin/users/${userId}`);
             setState(prev => ({
                 ...prev,
-                users: prev.users.filter(user => user.id !== userId),
+                users: prev.users.filter(user => user.id !== userId)
             }));
         } catch (error) {
             console.error('Delete user error:', error);
@@ -246,20 +216,10 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const updateCourse = async (courseId: string, data: Partial<Course>) => {
         try {
-            const { data: _updatedCourse, error } = await supabase
-                .from('courses')
-                .update(data)
-                .eq('id', courseId)
-                .select()
-                .single();
-
-            if (error) throw error;
-
+            const { data: updatedCourse } = await axiosInstance.put(`/admin/courses/${courseId}`, data);
             setState(prev => ({
                 ...prev,
-                courses: prev.courses.map(course =>
-                    course.id === courseId ? { ...course, ...data } : course
-                ),
+                courses: prev.courses.map(course => course.id === courseId ? { ...course, ...updatedCourse } : course)
             }));
         } catch (error) {
             console.error('Update course error:', error);
@@ -268,14 +228,7 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const createCourse = async (course: Omit<Course, 'id'>) => {
         try {
-            const { data: newCourse, error } = await supabase
-                .from('courses')
-                .insert([course])
-                .select()
-                .single();
-
-            if (error) throw error;
-
+            const { data: newCourse } = await axiosInstance.post('/admin/courses', course);
             setState(prev => ({
                 ...prev,
                 courses: [...prev.courses, newCourse],
@@ -287,20 +240,10 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const updateInvestmentPool = async (poolId: string, data: Partial<InvestmentPool>) => {
         try {
-            const { data: _updatedPool, error } = await supabase
-                .from('investment_pools')
-                .update(data)
-                .eq('id', poolId)
-                .select()
-                .single();
-
-            if (error) throw error;
-
+            const { data: updatedPool } = await axiosInstance.put(`/admin/investment-pools/${poolId}`, data);
             setState(prev => ({
                 ...prev,
-                investmentPools: prev.investmentPools.map(pool =>
-                    pool.id === poolId ? { ...pool, ...data } : pool
-                ),
+                investmentPools: prev.investmentPools.map(pool => pool.id === poolId ? { ...pool, ...updatedPool } : pool)
             }));
         } catch (error) {
             console.error('Update investment pool error:', error);
@@ -309,30 +252,19 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const resolveWithdrawal = async (requestId: string, resolution: 'approved' | 'rejected') => {
         try {
-            const { data: updatedRequest, error } = await supabase
-                .from('withdrawal_requests')
-                .update({
-                    status: resolution,
-                    processed_at: new Date().toISOString(),
-                })
-                .eq('id', requestId)
-                .select()
-                .single();
-
-            if (error) throw error;
-
+            const { data: updatedRequest } = await axiosInstance.put(`/admin/withdrawals/${requestId}`, {
+                status: resolution,
+                processed_at: new Date().toISOString()
+            });
             setState(prev => ({
                 ...prev,
-                withdrawalRequests: prev.withdrawalRequests.map(request =>
-                    request.id === requestId ? { ...request, ...updatedRequest } : request
-                ),
+                withdrawalRequests: prev.withdrawalRequests.map(req => req.id === requestId ? { ...req, ...updatedRequest } : req)
             }));
         } catch (error) {
             console.error('Resolve withdrawal error:', error);
         }
     };
 
-    // Fetch data on mount
     useEffect(() => {
         fetchAdminData();
     }, []);
