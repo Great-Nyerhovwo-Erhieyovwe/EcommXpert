@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import './Auth.css';
 
 const SignupPage: React.FC = () => {
@@ -32,57 +31,24 @@ const SignupPage: React.FC = () => {
 
         try {
             // FIX: Correctly destructure data and error from the response
-            const { data, error: authError } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: {
-                        first_name: firstName,
-                        last_name: lastName,
-                    }
-                }
+            const response = await fetch('https://ecommxpertbackend.onrender.com/auth/signup', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    firstName,
+                    lastName
+                })
             });
 
-            if (authError) throw authError;
+            const data = await response.json();
 
-            // Use the destructured data.user
-            const user = data.user;
-
-            // Supabase post-signup behavior: A user object will be present if the email
-            // is confirmed immediately (like in a test environment) or if auto-confirm is enabled.
-            // In a production environment with email confirmation, data.user might be null,
-            // but we still want to show a success message.
-            if (user) {
-                // Create user profile in database
-                const { error: profileError } = await supabase
-                    .from('user_profiles')
-                    .insert([{
-                        id: user.id,
-                        email,
-                        first_name: firstName,
-                        last_name: lastName,
-                        goal: 'learn', // default goal
-                        balance: 0,
-                        total_earnings: 0,
-                        xp: 0,
-                        streak: 0,
-                        badges: ['Onboarding'],
-                        created_at: new Date().toISOString(),
-                    }]);
-
-                if (profileError) {
-                    // Log the profile creation error but continue with the user flow
-                    console.error('Profile creation error:', profileError);
-                }
-
+            if (!response.ok) {
+                throw new Error(data.error || "Signup failed");
+            }
                 // Navigate to login
                 navigate('/login');
-            } else {
-                // If the user object is null, it typically means an email confirmation is required.
-                setError('Success! Please check your email to confirm your account and complete signup.');
-                // Optionally navigate to a page prompting email check
-                // navigate('/check-email');
-            }
 
         } catch (err) {
             // FIX: Ensure error message is a string
@@ -95,16 +61,9 @@ const SignupPage: React.FC = () => {
     const handleGoogleSignup = async () => {
         setLoading(true);
         try {
-            const { error: googleError } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: 'https://ecommxpert.onrender.com/oauth-callback'
-                }
-            });
-            if (googleError) throw googleError;
-            // NOTE: The browser handles the redirect, so no need for 'navigate' here,
-            // but if there's no error, we set loading to false in the finally block
-            // or let the redirect happen.
+            const res = await fetch("https://ecommxpertbackend.onrender.com/auth/google", {
+                method: "GET"
+            })    
         } catch (err) {
             // FIX: Ensure error message is a string
             setError((err as Error).message || 'Google signup failed');

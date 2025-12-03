@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import './Auth.css';
 
 const LoginPage: React.FC = () => {
@@ -16,33 +15,25 @@ const LoginPage: React.FC = () => {
         setError(null);
 
         try {
-            const { data, error: AuthError
-            } = await supabase.auth.signInWithPassword({
-                email,
-                password,
+            const res = await fetch("https://ecommxpertbackend.onrender.com/auth/login", {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
             });
 
-            if (AuthError) throw AuthError;
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Login failed")
+            }
 
             const user = data?.user;
 
             if (user) {
-                // Get user role from database
-                const { data: userProfile, error: profileError } = await supabase
-                    .from('user_profiles')
-                    .select('onboarding_completed, role')
-                    .eq('id', user.id)
-                    .single();
-
-                if (profileError) throw profileError;
-
-                if (!userProfile) {
-                    throw new Error('User profile not found.');
-                }
-
-                if (userProfile.onboarding_completed) {
+                // Redirect based on onboarding status and role
+                if (user.onboarding_completed) {
                     // user completed onboarding, redirect based on role
-                    if (userProfile.role === 'admin') {
+                    if (user.role === 'admin') {
                         navigate('/admin');
                     } else {
                         navigate('/dashboard');
@@ -52,6 +43,8 @@ const LoginPage: React.FC = () => {
                     // user hasn't completed onboarding, redirecting to onboarding
                     navigate('/onboarding');
                 }
+            } else {
+                throw new Error("User not found");
             }
         } catch (err) {
             setError((err as Error).message || 'Login failed');
@@ -63,15 +56,12 @@ const LoginPage: React.FC = () => {
     const handleGoogleLogin = async () => {
         setLoading(true);
         try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: 'https://ecommxpert.onrender.com/oauth-callback'
-                }
+            const res = await fetch('https://ecommxpertbackend.onrender.com/auth/google', {
+                method: 'GET'
             });
-            if (error) throw error;
         } catch (err) {
             setError((err as Error).message || 'Google login failed');
+        } finally {
             setLoading(false);
         }
     };

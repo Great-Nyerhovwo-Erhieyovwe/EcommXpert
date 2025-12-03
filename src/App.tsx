@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './lib/supabase.ts';
-import { AdminProvider } from './components/admin/AdminContext';
+import { AdminProvider } from './pages/admin/AdminContext';
 import { OnboardingProvider } from './components/onboarding/OnboardingContext';
 import { GamificationProvider } from './components/gamification/GamificationContext';
 import { SecurityProvider } from './components/security/SecurityContext';
 import { EmailProvider } from './components/email/EmailContext';
 import OnboardingFlow from './components/onboarding/OnboardingFlow';
-import DashboardLayout from './components/dashboard/DashboardLayout';
-import AdminLayout from './components/admin/AdminLayout';
+import DashboardLayout from './pages/dashboard/DashboardLayout';
+import AdminLayout from './pages/admin/AdminLayout';
 import './App.css';
-import HomePage from './components/homepage/HomePage.tsx';
-import AuditDashboard from './components/admin/AuditDashboard.tsx';
-import LoginPage from './components/auth/LoginPage.tsx';
-import SignupPage from './components/auth/SignupPage.tsx';
+import HomePage from './pages/homepage/HomePage.tsx';
+import AuditDashboard from './pages/admin/AuditDashboard.tsx';
+import LoginPage from './pages/auth/LoginPage.tsx';
+import SignupPage from './pages/auth/SignupPage.tsx';
 // import { MobileProvider } from './hooks/useMobile.ts';
 import { DashboardProvider } from './hooks/useDashboard.ts';
-import OAuthCallback from './components/auth/OAuthCallback.tsx';
+import OAuthSuccess from './pages/auth/OAuthSuccess.tsx';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -66,9 +66,7 @@ function App() {
                         <Route path="/homepage" element={<HomePage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/signup" element={<SignupPage />} />
-                        <Route path="/onboarding/*" element={<OnboardingFlow state={0} prevStep={function (): void {
-                          throw new Error('Function not implemented.');
-                        }} />} />
+                        <Route path="/onboarding/*" element={<OnboardingFlow />} />
 
                         {/* Protected Routes */}
                         <Route
@@ -99,7 +97,7 @@ function App() {
                         />
 
                         {/* OAuth Callback */}
-                        <Route path="/oauth-callback" element={<OAuthCallback />} />
+                        <Route path="/oauth-success" element={<OAuthSuccess />} />
 
                         {/* Default route */}
                         <Route path="*" element={<HomePage />} />
