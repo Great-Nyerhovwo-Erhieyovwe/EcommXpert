@@ -1,4 +1,10 @@
 import db from '../db';
+import User from '../models/User.js';
+import Course from '../models/Course.js';
+import InvestmentPool from '../models/InvestmentPool.js';
+import WithdrawalRequest from '../models/WithdrawalRequest.js';
+import NotificationTemplate from '../models/NotificationTemplate.js';
+import PlatformMetric from '../models/PlatformMetric.js';
 
 // Fetch all admin data
 export const getAdminData = async (req, res) => {
