@@ -73,11 +73,11 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         fetchDashboardData();
     }, []);
 
-    return (
-        <DashboardContext.Provider value={{ state, dispatch, fetchDashboardData }}>
-            {children}
-        </DashboardContext.Provider>
-    );
+
+    const providerValue = { state, dispatch, fetchDashboardData };
+    
+
+    return React.createElement(DashboardContext.Provider, { value: providerValue }, children);
 };
 
 export default useDashboard;

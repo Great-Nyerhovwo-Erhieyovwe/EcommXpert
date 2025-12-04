@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import auth from './routes/auth.js';
 import dashboardRoutes from './routes/dashboard.js';
 import adminRoutes from './routes/admin.js';
+import db from './db.js'
 
 dotenv.config();
 
@@ -12,6 +13,9 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
+// Connect DB
+db();
 
 // Routes
 app.use('/api/auth', auth);

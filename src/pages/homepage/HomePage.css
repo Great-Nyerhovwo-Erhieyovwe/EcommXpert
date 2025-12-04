@@ -1326,7 +1326,7 @@ html {
     }
 
     .feature-category {
-        width: 230px;
+        width: 300px;
     }
 
     /* 
@@ -1345,7 +1345,7 @@ html {
     }
 
     .earning-card {
-        width: 230px;
+        width: 280px;
         height: auto;
         display: flex;
         flex-direction: column;

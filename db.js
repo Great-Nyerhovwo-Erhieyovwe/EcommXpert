@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const connectDB = async () => {
+const db = async () => {
   try {
     if (!process.env.MONGO_URL) {
-      throw new Error('MONGO_URI not defined in environment variables');
+      throw new Error('MONGO_URL not defined in environment variables');
     }
 
     await mongoose.connect(process.env.MONGO_URL, {
@@ -18,4 +18,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+export default db;

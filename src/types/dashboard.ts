@@ -29,6 +29,9 @@ export interface Transaction {
 }
 
 export interface User {
+    total_earnings: number;
+    total_invested: number;
+    balance: number;
     id: string;
     firstName: string;
     lastName: string;

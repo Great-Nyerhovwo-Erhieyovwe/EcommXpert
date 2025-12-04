@@ -5,7 +5,7 @@ import InvestmentPool from '../models/InvestmentPool.js';
 import WithdrawalRequest from '../models/WithdrawalRequest.js';
 import NotificationTemplate from '../models/NotificationTemplate.js';
 import PlatformMetric from '../models/PlatformMetric.js';
-import db from '../db'; // Your DB client
+import db from '../db.js'; // Your DB client
 
 export const getDashboardData = async (req, res) => {
     try {

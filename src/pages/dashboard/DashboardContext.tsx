@@ -158,7 +158,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const updateCourse = async (courseId: string, data: Partial<Course>) => {
     try {
-      const { data: updatedCourse } = await axiosInstance.put(`/courses/${courseId}`, data);
+      const { data: _updatedCourse } = await axiosInstance.put(`/courses/${courseId}`, data);
       setState(prev => ({
         ...prev,
         courses: prev.courses.map(course => course.id === courseId ? { ...course, ...data } : course),
